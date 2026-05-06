@@ -77,6 +77,7 @@ def detect_language(text):
 # =========================
 
 def english_t5_summary(text):
+
     tokenizer, model = load_english_model()
 
     input_text = "summarize: " + text
@@ -90,13 +91,20 @@ def english_t5_summary(text):
 
     summary_ids = model.generate(
         inputs["input_ids"],
-        max_length=80,
-        min_length=20,
-        num_beams=4,
+        max_length=120,
+        min_length=30,
+        num_beams=6,
+        length_penalty=1.5,
+        repetition_penalty=2.0,
         early_stopping=True
     )
 
-    return tokenizer.decode(summary_ids[0], skip_special_tokens=True)
+    summary = tokenizer.decode(
+        summary_ids[0],
+        skip_special_tokens=True
+    )
+
+    return summary
 
 
 # =========================
@@ -107,23 +115,24 @@ def arabic_mt5_summary(text):
     tokenizer, model = load_arabic_model()
 
     inputs = tokenizer(
-    "summarize: " + text,
+        "summarize: " + text,
         return_tensors="pt",
         max_length=512,
         truncation=True
     )
 
-   summary_ids = model.generate(
-    inputs["input_ids"],
-    max_length=120,
-    min_length=30,
-    num_beams=6,
-    length_penalty=1.5,
-    repetition_penalty=2.0,
-    early_stopping=True
-)
+    summary_ids = model.generate(
+        inputs["input_ids"],
+        max_length=120,
+        min_length=30,
+        num_beams=6,
+        length_penalty=1.5,
+        repetition_penalty=2.0,
+        early_stopping=True
+    )
 
     return tokenizer.decode(summary_ids[0], skip_special_tokens=True)
+
 
 
 # =========================
