@@ -107,19 +107,21 @@ def arabic_mt5_summary(text):
     tokenizer, model = load_arabic_model()
 
     inputs = tokenizer(
-        text,
+    "summarize: " + text,
         return_tensors="pt",
         max_length=512,
         truncation=True
     )
 
-    summary_ids = model.generate(
-        inputs["input_ids"],
-        max_length=100,
-        min_length=20,
-        num_beams=4,
-        early_stopping=True
-    )
+   summary_ids = model.generate(
+    inputs["input_ids"],
+    max_length=120,
+    min_length=30,
+    num_beams=6,
+    length_penalty=1.5,
+    repetition_penalty=2.0,
+    early_stopping=True
+)
 
     return tokenizer.decode(summary_ids[0], skip_special_tokens=True)
 
@@ -164,7 +166,7 @@ def textrank_summary(text):
         )
 
     try:
-        result = summarize(text)
+        result = summarize(text, ratio=0.3)
 
         if result.strip() == "":
             return "Text too short for TextRank. Please enter a longer paragraph."
